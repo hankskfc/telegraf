@@ -14,6 +14,8 @@ to gather stats from the [Engine API](https://docs.docker.com/engine/api/v1.24/)
   ## Docker Endpoint
   ##   To use TCP, set endpoint = "tcp://[ip]:[port]"
   ##   To use environment variables (ie, docker-machine), set endpoint = "ENV"
+  ## Note: If using the default endpoint, telegraf must be given permission
+  ## to access the socket. 
   endpoint = "unix:///var/run/docker.sock"
 
   ## Set to true to collect Swarm metrics(desired_replicas, running_replicas)
@@ -66,6 +68,26 @@ to gather stats from the [Engine API](https://docs.docker.com/engine/api/v1.24/)
 When using the `"ENV"` endpoint, the connection is configured using the
 [cli Docker environment variables](https://godoc.org/github.com/moby/moby/client#NewEnvClient).
 
+#### Permissions
+
+When using the default unix socket endpoint, telegraf must be given permission
+to access the socket. This can be done by adding telegraf to the docker group
+with the following command:
+
+```
+sudo usermod -aG docker telegraf
+```
+
+If telegraf is run within a container, the unix socket will need to be exposed
+within the telegraf container. This can be done in the docker CLI by add the
+option `-v /var/run/docker.sock:/var/run/docker.sock` or adding the following
+lines to the telegraf container definition in a docker compose file:
+
+```
+volumes:
+  - /var/run/docker.sock:/var/run/docker.sock
+```
+
 #### Kubernetes Labels
 
 Kubernetes may add many labels to your containers, if they are not needed you
@@ -73,7 +95,6 @@ may prefer to exclude them:
 ```
   docker_label_exclude = ["annotation.kubernetes*"]
 ```
-
 
 ### Metrics:
 

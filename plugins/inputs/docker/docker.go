@@ -79,6 +79,8 @@ var sampleConfig = `
   ## Docker Endpoint
   ##   To use TCP, set endpoint = "tcp://[ip]:[port]"
   ##   To use environment variables (ie, docker-machine), set endpoint = "ENV"
+  ## Note: If using the default endpoint, telegraf must be given permission
+  ## to access the socket. 
   endpoint = "unix:///var/run/docker.sock"
 
   ## Set to true to collect Swarm metrics(desired_replicas, running_replicas)
